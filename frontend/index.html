@@ -1,0 +1,204 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Alertify</title>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="./index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+  <script type="text/javascript" src="./index.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-sm bg-light">
+    <span class="navbar-brand mb-0 h1">Alertify</span>
+    <ul class="navbar-nav ml-auto" id="navbar-items">
+    </ul>
+  </nav>
+  <!-- modal -->
+  <div class="modal fade" id="myModal" role="dialog" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Profile Settings</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Edit Profile Information</p>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" id="profile-edit-firstName" placeholder="First Name">
+          </div>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" id="profile-edit-lastName" placeholder="Last Name">
+          </div>
+          <div class="input-group mb-3">
+            <input type="email" class="form-control" id="profile-edit-email" placeholder="Email">
+          </div>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" id="profile-edit-password" placeholder="New Password">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary mr-auto" id="logout-btn" data-dismiss="modal">Logout</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="modal-save">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="master">
+    <div class="grandma">
+
+      <div class="registration invisible">
+        <div class="top-header">
+          <h1>New User Registration</h1>
+        </div>
+        <div class="form-group form-inline">
+          <div class="boxesR input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+            <input required type="text" id="fname" class="form-control" placeholder="First name" />
+          </div>
+        </div>
+        <div class="form-group form-inline">
+          <div class="boxesR input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+            <input required type="text" id="lname" class="form-control" placeholder="Last name" />
+          </div>
+        </div>
+        <div class="form-group form-inline">
+          <div class="boxesR input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+            <input required type="email" id="email" class="form-control" placeholder="email" />
+          </div>
+        </div>
+        <div class="form-group form-inline">
+          <div class="boxesR input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>
+            <input required type="password" id="password" class="form-control" placeholder="password" />
+          </div>
+        </div>
+        <div class="buttonsR">
+          <button type="submit" class="btn" id="registerbtn">Register</button> <!-- add required-->
+        </div>
+        <div class="alreadyRegis">
+          <a class="link" id="registerLogin">Already Registered? Click here to login</a>
+        </div>
+      </div>
+
+      <div class="login">
+        <div class="login-header">
+          <h1>Login</h1>
+        </div>
+        <div class="form-group form-inline">
+          <div class="boxesR input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+            <input type="text" id="emailLog" class="form-control" placeholder="email" />
+          </div>
+        </div>
+        <div class="form-group form-inline">
+          <div class="boxesR input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>
+            <input type="password" id="passwordLog" class="form-control" placeholder="password" />
+          </div>
+        </div>
+        <div class="buttonsR">
+          <button type="button" class="btn" id="loginfr">Login</button>
+        </div>
+        <div class="buttonsR">
+          <button type="button" class="btn" id="goRegis">Go to Registration</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-container invisible">
+
+      <div>
+        <button type="button" class="btn btn-danger" id="alert">Notify Contacts</button>
+      </div>
+
+      <div class="home-page">
+
+        <div class="card contact-list">
+          <div class="card-body">
+            <h3>Contacts</h3>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" id="contact-firstName" placeholder="First Name">
+            </div>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" id="contact-lastName" placeholder="Last Name">
+            </div>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" id="contact-phone" placeholder="Phone Number">
+            </div>
+            <div class="input-group mb-3">
+              <input type="email" class="form-control" id="contact-email" placeholder="Email">
+            </div>
+            <div class="event-button mb-3">
+              <button type="button" class="btn btn-primary home-submit" id="contact-button">Add Contact</button>
+            </div>
+          </div>
+          <ul class="list-group" id="contact-list-group">
+            <li class="list-group-item active">Cras justo odio</li>
+            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">Morbi leo risus</li>
+            <li class="list-group-item">Porta ac consectetur ac</li>
+            <li class="list-group-item">Vestibulum at eros</li>
+            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">Morbi leo risus</li>
+            <li class="list-group-item">Porta ac consectetur ac</li>
+            <li class="list-group-item">Vestibulum at eros</li>
+            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">Morbi leo risus</li>
+            <li class="list-group-item">Porta ac consectetur ac</li>
+            <li class="list-group-item">Vestibulum at eros</li>
+          </ul>
+          <div class="contact-modals">
+            
+          </div>
+        </div>
+
+        <div class="card event-list">
+          <div class="card-body">
+            <h3 class="card-title">Event Tracker</h3>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" placeholder="Location">
+            </div>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" placeholder="Add Contacts">
+            </div>
+            <div class="event-button mb-3">
+              <button type="button" class="btn btn-primary home-submit" id="event-button">Add Event</button>
+            </div>
+          </div>
+          <ul class="list-group">
+            <li class="list-group-item active">Cras justo odio</li>
+            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">Morbi leo risus</li>
+            <li class="list-group-item">Porta ac consectetur ac</li>
+            <li class="list-group-item">Vestibulum at eros</li>
+            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">Morbi leo risus</li>
+            <li class="list-group-item">Porta ac consectetur ac</li>
+            <li class="list-group-item">Vestibulum at eros</li>
+          </ul>
+        </div>
+
+
+      </div>
+    </div>
+
+    <div class="calendar">
+
+    </div>
+  </div>
+</body>
+
+</html>

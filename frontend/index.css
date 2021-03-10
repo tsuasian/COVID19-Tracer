@@ -1,0 +1,119 @@
+.master {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background: linear-gradient(to top, #fff3f5,#aaf2f4);
+}
+
+h1 {
+  text-align: center;
+  padding-bottom: 10px;
+  color: white;
+}
+
+.grandma {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: #afcfee;
+  height: 500px;
+  width: 500px;
+  border-radius: 5%;
+}
+
+.main-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  background-color: #afcfee;
+  height: 95%;
+  width: 95%;
+  border-radius: 5px;
+}
+
+.registration {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.buttonsR > button {
+  margin: 10px;
+  background-color: #61d195;
+}
+
+.boxesR input {
+  width: 200px;
+}
+
+#alert {
+  height: 70px;
+  width: 250px;
+  margin: 20px;
+  padding: 20px;
+  /* background-color: #FF4C4C; */
+  display: inline-block;
+}
+
+.invisible {
+  display: none !important;
+}
+
+.home-page {
+  height: inherit;
+  width: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+}
+
+.event-list {
+  height: 80%;
+  width: 75%;
+  padding: 10px;
+  margin: 20px;
+}
+
+.contact-list {
+  height: 80%;
+  width: 75%;
+  padding: 10px;
+  margin: 20px;
+  /* overflow: scroll; */
+}
+
+.list-group {
+  overflow-y: auto;
+}
+
+.home-submit {
+  /* height: 75px;
+  width: 125px; */
+  /* margin: 30px;
+  padding: 30px;
+  background-color: #FF4C4C; */
+}
+
+.card-body {
+  /* display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: column; */
+}
+
+h3 {
+  text-align: center;
+  /* color: white; */
+  /* overflow: scroll; */
+}
