@@ -35,7 +35,7 @@ $(document).ready(function() {
       user: user.user
     })
     .then(function(resp) {
-      console.log("contacts axios", resp)
+      // console.log("contacts axios", resp)
       var contacts = resp.data.contacts
       contacts = contacts.sort(compare)
       var contactList = $('#contact-list-group')
@@ -93,10 +93,10 @@ $(document).ready(function() {
       user: user.user
     })
     .then(function(resp) {
-      console.log("contacts axios event", resp)
+      // console.log("contacts axios event", resp)
       var contacts = resp.data.contacts
       contacts = contacts.sort(compare)
-      console.log("contacts pulled", contacts)
+      // console.log("contacts pulled", contacts)
       allContacts = contacts.sort(compare)
       var contactPicker = $('#contact-picker')
       contactPicker.empty()
@@ -119,10 +119,10 @@ $(document).ready(function() {
       user: user.user
     })
     .then(function(resp) {
-      console.log("contacts axios event", resp)
+      // console.log("contacts axios event", resp)
       var contacts = resp.data.contacts
       contacts = contacts.sort(compare)
-      console.log("contacts pulled", contacts)
+      // console.log("contacts pulled", contacts)
       allContacts = contacts.sort(compare)
       var contactPicker = $('#contact-picker-notif')
       contactPicker.empty()
@@ -164,7 +164,7 @@ $(document).ready(function() {
   }
 
   var pullEventList = function() {
-    console.log("user", user.user)
+    console.log("user", user)
     axios.post('http://localhost:1337/event/retrieve', {
       user: user.user
     })
@@ -219,7 +219,6 @@ $(document).ready(function() {
           `)
 
         for (var j=0; j<events[i].contacts.length; j++) {
-          console.log("contacts in event", events[i].location, events[i].contacts[j])
           $(`.${eventID}${eventID}`).append(`
             <li>${events[i].contacts[j]}</li>
           `)
@@ -242,6 +241,33 @@ $(document).ready(function() {
     })
   }
 
+  //notification retrieve function
+  var retrieveNotifcations = function() {
+    console.log('hello in ret notif!!!!!!!!!!!!!!!!!')
+    axios.post('http://localhost:1337/notification/retrieve', {
+      user: user.name
+    })
+    .then(function(resp) {
+      console.log("succ ret notif", resp)
+      //update notif modal
+      var notifications = resp.data.notifs
+      var notifList = $('#nav-notif-list')
+      for (var i=0; i<notifications.length; i++) {
+        for (var j=0; j<notifications[i].location.length; j++) {
+          notifList.append(`
+            <li>
+              <p>Location: ${notifications[i].location[j]}</p>
+              <p>From: ${notifications[i].from}</p>
+            </li>
+            `)
+        }
+      }
+    })
+    .catch(function(err) {
+      console.log("err in ret notif", err)
+    })
+  }
+
   if (ls.getItem("token")) {
     $('.login').addClass('invisible')
     $('.grandma').addClass('invisible')
@@ -251,7 +277,7 @@ $(document).ready(function() {
         Welcome ${JSON.parse(ls.getItem("token")).name}
       </span>
       <li class="nav-item">
-        <a class="nav-link" href="#" id="nav-notifications">
+        <a class="nav-link" href="#nav-notif-modal" id="nav-notifications" data-toggle="modal" data-target="#nav-notif-modal">
           Notifications
         </a>
       </li>
@@ -272,6 +298,7 @@ $(document).ready(function() {
     pullNotifContactList()
     pullEventList()
     pullNotifEventList()
+    retrieveNotifcations()
   }
 
   $('#registerLogin').on('click', function() {
@@ -309,6 +336,8 @@ $(document).ready(function() {
     })
     .then(function (resp) {
       console.log("Registration Response", resp)
+      $('.login').removeClass('invisible')
+      $('.registration').addClass('invisible')
     })
     .catch(function (err) {
       console.log("Error in registration", err)
@@ -337,7 +366,7 @@ $(document).ready(function() {
             Welcome ${resp.data.name}
           </span>
           <li class="nav-item">
-            <a class="nav-link" href="#" id="nav-notifications">
+            <a class="nav-link" href="#nav-notif-modal" id="nav-notifications" data-toggle="modal" data-target="#nav-notif-modal">
               Notifications
             </a>
           </li>
@@ -393,6 +422,7 @@ $(document).ready(function() {
     var location = $('#event-location').val()
     var contacts = $('[data-id=contact-picker]').attr("title")
     contacts = contacts.split(",")
+    $('#event-location').val('')
     // console.log(contacts)
     axios.post('http://localhost:1337/event/add', {
       location: location,
@@ -531,11 +561,35 @@ $(document).ready(function() {
       console.log("del succ event", resp)
       pullEventList()
       pullNotifEventList()
-
     })
     .catch(function(err) {
       console.log("err del", err)
     })
   });
+
+  $('#notif-send').click(function() {
+    var locations = $('[data-id=location-picker]').attr("title")
+    var contacts = $('[data-id=contact-picker-notif]').attr("title")
+    locations = locations.split(',')
+    contacts = contacts.split(',')
+    console.log(locations, contacts)
+    console.log(user.name)
+    if (locations[0] !== "Nothing Selected" && contacts[0] !== "Nothing Selected") {
+      axios.post('http://localhost:1337/notification/send', {
+        locations: locations,
+        from: user.name,
+        to: contacts
+      })
+      .then(function(resp) {
+        console.log("succ notif send", resp)
+      })
+      .catch(function(err) {
+        console.log("fail send notif", err)
+      })
+    }
+  });
+
+
+
 
 });

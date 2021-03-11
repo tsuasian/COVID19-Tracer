@@ -13,7 +13,7 @@ const MongoStore = require('connect-mongo').default
 const User = require('./models').User;
 const Contact = require('./models').Contact
 const Event = require('./models').Event
-const NotificationEvent = require('./models').NotificationEvent
+const Notification = require('./models').Notification
 
 //mongoose
 if (! fs.existsSync('./env.sh')) {
@@ -248,6 +248,33 @@ app.post('/event/delete', (req, res) => {
       res.json({doc: doc})
     } else {
       console.log("delet failed", err)
+    }
+  })
+})
+
+app.post('/notification/send', (req, res) => {
+  console.log('req body notif send', req.body)
+  let notif = {};
+  notif.location = req.body.locations
+  notif.from = req.body.from
+  notif.to = req.body.to
+  let newNotif = new Notification(notif)
+  newNotif.save()
+  .then((notif) => {
+    console.log("notif saved", notif)
+    res.json({success: true})
+  })
+  .catch((err) => { console.log("notif fail saved", notif)})
+})
+
+app.post('/notification/retrieve', (req, res) => {
+  console.log("contacts req body", req.body.user)
+  Notification.find({to: req.body.user}, (err, docs) => {
+    if (docs) {
+      console.log("pulled contacts", docs)
+      res.json({notifs: docs})
+    } else {
+      console.log("error pulling contacts", err)
     }
   })
 })

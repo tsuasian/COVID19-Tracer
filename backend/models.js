@@ -29,17 +29,17 @@ var EventSchema = new Schema({
 
 var EventSchema = mongoose.model('Event', EventSchema)
 
-var NotificationEvent = new Schema({
+var NotificationSchema = new Schema({
   location: [String],
   from: String,
   to: [String]
 })
 
-var NotifiationEvent = mongoose.model('NotificationEvent', NotificationEvent)
+var NotificationSchema = mongoose.model('Notification', NotificationSchema)
 
 module.exports = {
   User: UserSchema,
   Contact: ContactSchema,
   Event: EventSchema,
-  NotificaitonEvent: NotificationEvent
+  Notification: NotificationSchema
 }
