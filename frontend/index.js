@@ -61,6 +61,7 @@ $(document).ready(function() {
                     </div>
                   </div>
                   <div class="modal-footer">
+                    <button type="button" class="btn btn-danger mr-auto contact-delete-btn" id="delete-btn" data-dismiss="modal">Delete</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" id="contact-modal-save">Save changes</button>
                   </div>
@@ -235,14 +236,14 @@ $(document).ready(function() {
 
   $('#modal-save').click(function(e) {
     e.preventDefault()
-    var user = JSON.parse(ls.getItem("token"))
-    var ogEmail = user.user
+    var userLocal = JSON.parse(ls.getItem("token"))
+    var ogEmail = userLocal.user
     console.log("modal save clicked")
     axios.post('http://localhost:1337/profile/update', {
       ogEmail: ogEmail,
-      ogfname : user.firstName,
-      oglname: user.lastName,
-      ogpwd: user.password,
+      ogfname : userLocal.firstName,
+      oglname: userLocal.lastName,
+      ogpwd: userLocal.password,
       firstName: $('#profile-edit-firstName').val(),
       lastName: $('#profile-edit-lastName').val(),
       email: $('#profile-edit-email').val(),
@@ -250,6 +251,11 @@ $(document).ready(function() {
     })
     .then(function(resp) {
       console.log("Updated profile", resp)
+      user.firstName = resp.data.profile.firstName
+      user.lastName = resp.data.profile.lastName
+      user.name = `${resp.data.profile.firstName} ${resp.data.profile.lastName}`
+      console.log("user  updated", user)
+      ls.setItem("token", JSON.stringify(user))
       $('#user-nav').text(`${resp.data.profile.firstName} ${resp.data.profile.lastName}`)
     })
     .catch(function(err) {
@@ -282,9 +288,32 @@ $(document).ready(function() {
     })
     .then(function(resp) {
       console.log("Sucesss updating contact", resp)
+      pullContacts()
     })
     .catch(function(err) {
       console.log("Error in updating cona")
+    })
+  });
+
+  $(document).on("click", ".contact-delete-btn", function(e) {
+    e.preventDefault()
+    var inputs = $(this).parents().siblings(".modal-body")
+    var ogfname = inputs.find("#contact-edit-firstName").attr("placeholder")
+    var oglname = inputs.find("#contact-edit-lastName").attr("placeholder")
+    var ogphone = inputs.find("#contact-edit-phone").attr("placeholder")
+    var ogemail = inputs.find("#contact-edit-email").attr("placeholder")
+
+    axios.post('http://localhost:1337/contacts/delete', {
+      firstName: ogfname,
+      lastName: oglname,
+      email: ogemail
+    })
+    .then(function(resp) {
+      console.log("del succ", resp)
+      pullContacts()
+    })
+    .catch(function(err) {
+      console.log("err del", err)
     })
   });
 

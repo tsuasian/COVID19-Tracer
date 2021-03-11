@@ -103,7 +103,7 @@ app.post('/logout', (req, res) => {
 });
 
 app.post('/contact/add', (req, res) => {
-  Contact.find
+  // Contact.find
   let contact = {};
   console.log(req.body)
   contact.firstName = req.body.firstName,
@@ -126,20 +126,20 @@ app.post('/contacts/edit', function(req, res) {
     firstName: req.body.ogfname,
     lastName: req.body.oglname
   }, {
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    phone: req.body.phone,
-    email: req.body.email,
+    firstName: (req.body.firstName || req.body.ogfname),
+    lastName: (req.body.lastName || req.body.oglname),
+    phone: (req.body.phone || req.body.ogphone),
+    email: (req.body.email || req.body.ogEmail),
   },
   {new: true},
   function(err, contact) {
      if (contact) {
-       console.log("contact found and updated")
+       console.log("contact found and updated", contact)
+       res.json({contact: contact})
      } else {
        console.log("error contact not updated")
      }
   })
-  res.json({success: true})
 });
 
 app.post('/contacts/retrieve', (req, res) => {
@@ -166,13 +166,28 @@ app.post('/profile/update', (req, res) => {
   function(err, profile) {
     if (profile) {
       console.log("profile updated", profile)
-      res.json({profile: profile})
+      // res.json({profile: profile})
     } else {
       console.log("err updating profile", err)
     }
   })
 })
 
+app.post('/contacts/delete', (req, res) => {
+  console.log("delete req body", req.body)
+  Contact.findOneAndDelete({
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.email
+  }, function(err, doc) {
+    if (doc) {
+      console.log("delete successful", doc)
+      res.json({doc: doc})
+    } else {
+      console.log("delet failed", err)
+    }
+  })
+})
 
 
 
