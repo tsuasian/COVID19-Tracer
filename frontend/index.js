@@ -139,6 +139,30 @@ $(document).ready(function() {
     })
   }
 
+  var pullNotifEventList = function() {
+    axios.post('http://localhost:1337/event/retrieve',
+    {
+      user: user.user
+    })
+    .then(function(resp) {
+      console.log("pull notif location")
+      var events = resp.data.events
+      events = events.sort(compareE)
+      var location = $('#location-picker')
+      location.empty()
+      for (var i=0; i<events.length; i++) {
+        location.append(`
+          <option value="${events[i].location}">${events[i].location}</option>
+          `)
+      }
+      location.selectpicker("refresh")
+
+    })
+    .catch(function(err) {
+      console.log("err fetch location events", err)
+    })
+  }
+
   var pullEventList = function() {
     console.log("user", user.user)
     axios.post('http://localhost:1337/event/retrieve', {
@@ -247,6 +271,7 @@ $(document).ready(function() {
     pullEventContactList()
     pullNotifContactList()
     pullEventList()
+    pullNotifEventList()
   }
 
   $('#registerLogin').on('click', function() {
@@ -379,6 +404,7 @@ $(document).ready(function() {
       pullEventContactList()
       pullNotifContactList()
       pullEventList()
+      pullNotifEventList()
     })
     .catch(function(err) {
       console.log("error adding event", err)
@@ -485,16 +511,31 @@ $(document).ready(function() {
     .then(function(resp) {
       console.log("succ edit event", resp)
       pullEventList()
+      pullNotifEventList()
     })
     .catch(function(err) {
       console.long("failed edit event", err)
     })
   });
 
-  // $(document).on("click", ".delete-btn-event", function(e) {
-  //
-  // })
+  $(document).on("click", ".delete-btn-event", function(e) {
+    e.preventDefault()
+    var inputs = $(this).parents().siblings(".modal-body")
+    var ogLocation = inputs.find("#event-edit-location").attr("placeholder")
+    console.log('og loc', ogLocation)
 
+    axios.post('http://localhost:1337/event/delete', {
+      location: ogLocation
+    })
+    .then(function(resp) {
+      console.log("del succ event", resp)
+      pullEventList()
+      pullNotifEventList()
 
+    })
+    .catch(function(err) {
+      console.log("err del", err)
+    })
+  });
 
 });

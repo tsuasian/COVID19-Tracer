@@ -30,8 +30,9 @@ var EventSchema = new Schema({
 var EventSchema = mongoose.model('Event', EventSchema)
 
 var NotificationEvent = new Schema({
-  location: String,
-  rel: String
+  location: [String],
+  from: String,
+  to: [String]
 })
 
 var NotifiationEvent = mongoose.model('NotificationEvent', NotificationEvent)

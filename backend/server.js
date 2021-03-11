@@ -238,6 +238,20 @@ app.post('/event/retrieve', (req, res) => {
   })
 });
 
+app.post('/event/delete', (req, res) => {
+  console.log("delete event req body", req.body)
+  Event.findOneAndDelete({
+    location: req.body.location
+  }, function(err, doc) {
+    if (doc) {
+      console.log("delete successful in event", doc)
+      res.json({doc: doc})
+    } else {
+      console.log("delet failed", err)
+    }
+  })
+})
+
 
 
 
