@@ -208,7 +208,21 @@ app.post('/event/add', (req, res) => {
 
 app.post('/event/edit', (req, res) => {
   console.log("event edit reqbody", req.body)
-
+  Event.findOneAndUpdate({
+    location: req.body.ogLocation,
+  }, {
+    location: (req.body.location || req.body.ogLocation),
+    contacts: req.body.contacts
+  },
+  {new: true},
+  function(err, event) {
+    if (event) {
+      console.log("event found and updated", event)
+      res.json({event: event})
+    } else {
+      console.log("error contact not updated")
+    }
+  })
 });
 
 app.post('/event/retrieve', (req, res) => {

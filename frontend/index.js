@@ -124,6 +124,8 @@ $(document).ready(function() {
       console.log("events from db", events)
       var eventList = $('#event-list-group')
       eventList.empty()
+      eventList.nextAll().remove();
+      $('.modal-backdrop').remove();
       for (var i=0; i<events.length; i++) {
         eventID = events[i].location.replace(/\s/g, '')
         eventList.append(`
@@ -143,6 +145,11 @@ $(document).ready(function() {
                 </div>
                 <div class="modal-body">
                   <p>Edit Location Information</p>
+                  <div>
+                    <h5>Current Contacts Associated:</h5>
+                    <ul class="${eventID}${eventID}">
+                    </ul>
+                  </div>
                   <div class="input-group mb-3">
                     <input type="text" class="form-control" id="event-edit-location" placeholder="${events[i].location}">
                   </div>
@@ -154,21 +161,21 @@ $(document).ready(function() {
                 <div class="modal-footer">
                   <button type="button" class="btn btn-danger mr-auto delete-btn-event" id="delete-btn-event" data-dismiss="modal">Delete</button>
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary" id="event-modal-save">Save changes</button>
+                  <button type="button" class="btn btn-primary" id="event-modal-save" data-dismiss="modal">Save changes</button>
                 </div>
               </div>
             </div>
           </div>
           `)
-        // $(`.${eventID}`).selectpicker('render')
-        // for (var j=0; j<events[i].contacts.length; j++) {
-        //   console.log("contacts in event", events[i].location, events[i].contacts[j])
-        //   $(`.${eventID}`).append(`
-        //     <option value="${events[i].contacts[j]}">${events[i].contacts[j]}</option>
-        //   `)
-        // }
-        // $(`.${eventID}`).selectpicker('refresh')
 
+        for (var j=0; j<events[i].contacts.length; j++) {
+          console.log("contacts in event", events[i].location, events[i].contacts[j])
+          $(`.${eventID}${eventID}`).append(`
+            <li>${events[i].contacts[j]}</li>
+          `)
+        }
+
+        //ASYNC PROBLEMS WITH EVENT PULL CONTACTS -- GLOBAL VAR
         console.log("all contacts in creation", allContacts)
         for (var j=0; j<allContacts.length; j++) {
           $(`.${eventID}`).append(`
@@ -442,11 +449,13 @@ $(document).ready(function() {
     var ogLocation = inputs.find('#event-edit-location').attr("placeholder")
 
     axios.post('http://localhost:1337/event/edit', {
+      ogLocation: ogLocation,
       location: location,
       contacts: contacts
     })
     .then(function(resp) {
       console.log("succ edit event", resp)
+      pullEventList()
     })
     .catch(function(err) {
       console.long("failed edit event", err)
