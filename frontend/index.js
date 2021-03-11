@@ -30,7 +30,7 @@ $(document).ready(function() {
   }
 
   var pullContacts = function() {
-    axios.post('http://localhost:1337/contacts/retrieve',
+    axios.post('https://damp-forest-68597.herokuapp.com/contacts/retrieve',
     {
       user: user.user
     })
@@ -88,7 +88,7 @@ $(document).ready(function() {
   }
 
   var pullEventContactList = function() {
-    axios.post('http://localhost:1337/contacts/retrieve',
+    axios.post('https://damp-forest-68597.herokuapp.com/contacts/retrieve',
     {
       user: user.user
     })
@@ -114,7 +114,7 @@ $(document).ready(function() {
   }
 
   var pullNotifContactList = function() {
-    axios.post('http://localhost:1337/contacts/retrieve',
+    axios.post('https://damp-forest-68597.herokuapp.com/contacts/retrieve',
     {
       user: user.user
     })
@@ -140,7 +140,7 @@ $(document).ready(function() {
   }
 
   var pullNotifEventList = function() {
-    axios.post('http://localhost:1337/event/retrieve',
+    axios.post('https://damp-forest-68597.herokuapp.com/event/retrieve',
     {
       user: user.user
     })
@@ -165,7 +165,7 @@ $(document).ready(function() {
 
   var pullEventList = function() {
     console.log("user", user)
-    axios.post('http://localhost:1337/event/retrieve', {
+    axios.post('https://damp-forest-68597.herokuapp.com/event/retrieve', {
       user: user.user
     })
     .then(function(resp) {
@@ -244,7 +244,7 @@ $(document).ready(function() {
   //notification retrieve function
   var retrieveNotifcations = function() {
     console.log('hello in ret notif!!!!!!!!!!!!!!!!!')
-    axios.post('http://localhost:1337/notification/retrieve', {
+    axios.post('https://damp-forest-68597.herokuapp.com/notification/retrieve', {
       user: user.name
     })
     .then(function(resp) {
@@ -328,7 +328,7 @@ $(document).ready(function() {
     let email = $('#email').val()
     let password = $('#password').val()
     console.log(firstName, lastName, email, password)
-    axios.post('http://localhost:1337/registration', {
+    axios.post('https://damp-forest-68597.herokuapp.com/registration', {
       firstName: firstName,
       lastName: lastName,
       email: email,
@@ -347,7 +347,7 @@ $(document).ready(function() {
   $('#loginfr').click(function() {
     let email = $('#emailLog').val()
     let password = $('#passwordLog').val()
-    axios.post('http://localhost:1337/login', {
+    axios.post('https://damp-forest-68597.herokuapp.com/login', {
       email: email,
       password: password
     })
@@ -383,6 +383,11 @@ $(document).ready(function() {
           $('#profile-edit-lastName').attr("placeholder", lastName)
           $('#profile-edit-email').attr("placeholder", email)
           pullContacts()
+          pullEventContactList()
+          pullNotifContactList()
+          pullEventList()
+          pullNotifEventList()
+          retrieveNotifcations()
       }
     })
     .catch(function(err) {
@@ -396,7 +401,7 @@ $(document).ready(function() {
     let phone = $('#contact-phone')
     let email = $('#contact-email')
     console.log(firstName, lastName, phone, email)
-    axios.post('http://localhost:1337/contact/add', {
+    axios.post('https://damp-forest-68597.herokuapp.com/contact/add', {
       firstName: firstName.val(),
       lastName: lastName.val(),
       phone: phone.val(),
@@ -424,7 +429,7 @@ $(document).ready(function() {
     contacts = contacts.split(",")
     $('#event-location').val('')
     // console.log(contacts)
-    axios.post('http://localhost:1337/event/add', {
+    axios.post('https://damp-forest-68597.herokuapp.com/event/add', {
       location: location,
       contacts: contacts,
       user: user.user
@@ -447,7 +452,7 @@ $(document).ready(function() {
     var userLocal = JSON.parse(ls.getItem("token"))
     var ogEmail = userLocal.user
     console.log("modal save clicked")
-    axios.post('http://localhost:1337/profile/update', {
+    axios.post('https://damp-forest-68597.herokuapp.com/profile/update', {
       ogEmail: ogEmail,
       ogfname : userLocal.firstName,
       oglname: userLocal.lastName,
@@ -484,7 +489,7 @@ $(document).ready(function() {
     var ogemail = inputs.find("#contact-edit-email").attr("placeholder")
     var email = inputs.find("#contact-edit-email").val()
 
-    axios.post('http://localhost:1337/contacts/edit',  {
+    axios.post('https://damp-forest-68597.herokuapp.com/contacts/edit',  {
       ogfname: ogfname,
       firstName: firstName,
       oglname: oglname,
@@ -511,7 +516,7 @@ $(document).ready(function() {
     var ogphone = inputs.find("#contact-edit-phone").attr("placeholder")
     var ogemail = inputs.find("#contact-edit-email").attr("placeholder")
 
-    axios.post('http://localhost:1337/contacts/delete', {
+    axios.post('https://damp-forest-68597.herokuapp.com/contacts/delete', {
       firstName: ogfname,
       lastName: oglname,
       email: ogemail
@@ -533,7 +538,7 @@ $(document).ready(function() {
     var location = inputs.find('#event-edit-location').val()
     var ogLocation = inputs.find('#event-edit-location').attr("placeholder")
 
-    axios.post('http://localhost:1337/event/edit', {
+    axios.post('https://damp-forest-68597.herokuapp.com/event/edit', {
       ogLocation: ogLocation,
       location: location,
       contacts: contacts
@@ -554,7 +559,7 @@ $(document).ready(function() {
     var ogLocation = inputs.find("#event-edit-location").attr("placeholder")
     console.log('og loc', ogLocation)
 
-    axios.post('http://localhost:1337/event/delete', {
+    axios.post('https://damp-forest-68597.herokuapp.com/event/delete', {
       location: ogLocation
     })
     .then(function(resp) {
@@ -575,7 +580,7 @@ $(document).ready(function() {
     console.log(locations, contacts)
     console.log(user.name)
     if (locations[0] !== "Nothing Selected" && contacts[0] !== "Nothing Selected") {
-      axios.post('http://localhost:1337/notification/send', {
+      axios.post('https://damp-forest-68597.herokuapp.com/notification/send', {
         locations: locations,
         from: user.name,
         to: contacts
