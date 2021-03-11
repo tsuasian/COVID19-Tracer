@@ -113,6 +113,32 @@ $(document).ready(function() {
     })
   }
 
+  var pullNotifContactList = function() {
+    axios.post('http://localhost:1337/contacts/retrieve',
+    {
+      user: user.user
+    })
+    .then(function(resp) {
+      console.log("contacts axios event", resp)
+      var contacts = resp.data.contacts
+      contacts = contacts.sort(compare)
+      console.log("contacts pulled", contacts)
+      allContacts = contacts.sort(compare)
+      var contactPicker = $('#contact-picker-notif')
+      contactPicker.empty()
+      for (var i=0; i<contacts.length; i++) {
+        contactPicker.append(`
+          <option value="${contacts[i].firstName} ${contacts[i].lastName}">${contacts[i].firstName} ${contacts[i].lastName}</option>
+          `)
+      }
+      contactPicker.selectpicker("refresh")
+
+    })
+    .catch(function(err) {
+      console.log("err fetch contact events", err)
+    })
+  }
+
   var pullEventList = function() {
     console.log("user", user.user)
     axios.post('http://localhost:1337/event/retrieve', {
@@ -219,6 +245,7 @@ $(document).ready(function() {
     $('#profile-edit-email').attr("placeholder", email)
     pullContacts()
     pullEventContactList()
+    pullNotifContactList()
     pullEventList()
   }
 
@@ -330,6 +357,7 @@ $(document).ready(function() {
       let email = $('#contact-email').val('')
       pullContacts()
       pullEventContactList()
+      pullNotifContactList()
     })
     .catch(function(err) {
       console.log("Error adding contact", err)
@@ -349,6 +377,7 @@ $(document).ready(function() {
     .then(function(resp) {
       console.log("succ add event", resp)
       pullEventContactList()
+      pullNotifContactList()
       pullEventList()
     })
     .catch(function(err) {

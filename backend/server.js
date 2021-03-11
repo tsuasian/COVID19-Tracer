@@ -13,6 +13,7 @@ const MongoStore = require('connect-mongo').default
 const User = require('./models').User;
 const Contact = require('./models').Contact
 const Event = require('./models').Event
+const NotificationEvent = require('./models').NotificationEvent
 
 //mongoose
 if (! fs.existsSync('./env.sh')) {
