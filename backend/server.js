@@ -189,6 +189,44 @@ app.post('/contacts/delete', (req, res) => {
   })
 })
 
+app.post('/event/add', (req, res) => {
+  console.log("reqbody event add", req.body)
+  let nEvent = {};
+  nEvent.location = req.body.location
+  nEvent.contacts = req.body.contacts
+  nEvent.rel = req.body.user
+  let newEvent = new Event(nEvent)
+  newEvent.save()
+  .then((event) => {
+    console.log("saved event", event)
+    res.json({event: event})
+  })
+  .catch((err) => {
+    console.log("Error saving event", err)
+  })
+});
+
+app.post('/event/edit', (req, res) => {
+
+});
+
+app.post('/event/retrieve', (req, res) => {
+  console.log("events req body", req.body.user)
+  Event.find({rel: req.body.user}, (err, docs) => {
+    if (docs) {
+      console.log("pulled events", docs)
+      res.json({events: docs})
+    } else {
+      console.log("error pulling events", err)
+    }
+  })
+});
+
+
+
+
+
+
 
 
 app.listen(process.env.PORT || 1337);

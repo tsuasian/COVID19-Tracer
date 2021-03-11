@@ -18,6 +18,15 @@ $(document).ready(function() {
     return 0
   }
 
+  function compareE(a, b) {
+    if (a.location.toUpperCase() < b.location.toUpperCase()) {
+      return -1
+    } else if (a.location.toUpperCase() > b.location.toUpperCase()) {
+      return 1
+    }
+    return 0
+  }
+
   var pullContacts = function() {
     axios.post('http://localhost:1337/contacts/retrieve',
     {
@@ -76,6 +85,96 @@ $(document).ready(function() {
     })
   }
 
+  var pullEventContactList = function() {
+    var contactsTop = []
+    axios.post('http://localhost:1337/contacts/retrieve',
+    {
+      user: user.user
+    })
+    .then(function(resp) {
+      console.log("contacts axios event", resp)
+      var contacts = resp.data.contacts
+      contacts = contacts.sort(compare)
+      contactsTop = contacts.sort(compare)
+      var contactPicker = $('#contact-picker')
+      contactPicker.empty()
+      for (var i=0; i<contacts.length; i++) {
+        contactPicker.append(`
+          <option value="${contacts[i].firstName} ${contacts[i].lastName}">${contacts[i].firstName} ${contacts[i].lastName}</option>
+          `)
+      }
+      contactPicker.selectpicker("refresh")
+    })
+    .catch(function(err) {
+      console.log("err fetch contact events", err)
+    })
+    return contactsTop
+  }
+
+  var pullEventList = function() {
+    console.log("user", user.user)
+    axios.post('http://localhost:1337/event/retrieve', {
+      user: user.user
+    })
+    .then(function(resp) {
+      var events = resp.data.events
+      events = events.sort(compareE)
+      console.log("events from db", events)
+      var eventList = $('#event-list-group')
+      eventList.empty()
+      for (var i=0; i<events.length; i++) {
+        eventID = events[i].location.replace(/\s/g, '')
+        eventList.append(`
+          <li class="list-group-item">
+            <a href=#${eventID} data-toggle="modal" data-target="#${eventID}">${events[i].location}</a>
+          </li>
+          `)
+        eventList.after(`
+          <div class="modal fade" id="${eventID}" role="dialog" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">${events[i].location}</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>Edit Location Information</p>
+                  <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="event-edit-location" placeholder="${events[i].location}">
+                  </div>
+                  <div class="input-group mb-3">
+                    <select class="selectpicker ${eventID}" multiple data-size="5" data-actions-box="true" data-width="100%" data-live-search="true" id="event-picker">
+                    </select>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-danger mr-auto delete-btn-event" id="delete-btn-event" data-dismiss="modal">Delete</button>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" id="event-modal-save">Save changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          `)
+        // $(`.${eventID}`).selectpicker('render')
+        for (var j=0; j<events[i].contacts.length; j++) {
+          console.log("contacts in event", events[i].location, events[i].contacts[j])
+          $(`.${eventID}`).append(`
+            <option value="${events[i].contacts[j]}">${events[i].contacts[j]}</option>
+          `)
+        }
+        $(`.${eventID}`).selectpicker('refresh')
+
+      }
+
+    })
+    .catch(function(err) {
+      console.log("error fetching events", err)
+    })
+  }
+
   if (ls.getItem("token")) {
     $('.login').addClass('invisible')
     $('.grandma').addClass('invisible')
@@ -102,6 +201,8 @@ $(document).ready(function() {
     $('#profile-edit-lastName').attr("placeholder", lastName)
     $('#profile-edit-email').attr("placeholder", email)
     pullContacts()
+    pullEventContactList()
+    pullEventList()
   }
 
   $('#registerLogin').on('click', function() {
@@ -211,6 +312,7 @@ $(document).ready(function() {
       let phone = $('#contact-phone').val('')
       let email = $('#contact-email').val('')
       pullContacts()
+      pullEventContactList()
     })
     .catch(function(err) {
       console.log("Error adding contact", err)
@@ -218,21 +320,25 @@ $(document).ready(function() {
   });
 
   $('#event-button').click(function() {
-    let location = $('#event-location').val()
-    // add contact array
-    // axios.post('http://localhost:1337/contact/add', {
-    //   firstName: firstName,
-    //   lastName: lastName,
-    //   phone: phone,
-    //   email: email
-    // })
-    // .then(function(resp) {
-    //   console.log("Success add contact", resp)
-    // })
-    // .catch(function(err) {
-    //   console.log("Error adding contact", err)
-    // })
-  });
+    var location = $('#event-location').val()
+    var contacts = $('[data-id=contact-picker]').attr("title")
+    contacts = contacts.split(",")
+    // console.log(contacts)
+    axios.post('http://localhost:1337/event/add', {
+      location: location,
+      contacts: contacts,
+      user: user.user
+    })
+    .then(function(resp) {
+      console.log("succ add event", resp)
+      pullEventContactList()
+      pullEventList()
+    })
+    .catch(function(err) {
+      console.log("error adding event", err)
+    })
+
+  })
 
   $('#modal-save').click(function(e) {
     e.preventDefault()
@@ -316,5 +422,31 @@ $(document).ready(function() {
       console.log("err del", err)
     })
   });
+
+  $(document).on("click", "#event-modal-save", function(e) {
+    e.preventDefault()
+    var inputs = $(this).parents().siblings(".modal-body")
+    var contacts = inputs.find('[data-id=event-picker]').attr("title")
+    contacts = contacts.split(",")
+    var location = inputs.find('#event-edit-location').val()
+    var ogLocation = inputs.find('#event-edit-location').attr("placeholder")
+
+    axios.post('http://localhost:1337/event/edit', {
+      location: location,
+      contacts: contact
+    })
+    .then(function(resp) {
+      console.log("succ edit event", resp)
+    })
+    .catch(function(err) {
+      console.long("failed edit event", err)
+    })
+  })
+
+  $(document).on("click", ".delete-btn-event", function(e) {
+
+  })
+
+
 
 });

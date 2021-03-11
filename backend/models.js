@@ -23,7 +23,8 @@ var ContactSchema =  mongoose.model('Contact', ContactSchema)
 
 var EventSchema = new Schema({
   location: String,
-  contacts: Array
+  contacts: Array,
+  rel: String,
 });
 
 var EventSchema = mongoose.model('Event', EventSchema)
