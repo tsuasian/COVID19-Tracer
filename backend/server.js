@@ -207,6 +207,7 @@ app.post('/event/add', (req, res) => {
 });
 
 app.post('/event/edit', (req, res) => {
+  console.log("event edit reqbody", req.body)
 
 });
 

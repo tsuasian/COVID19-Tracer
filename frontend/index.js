@@ -1,6 +1,8 @@
 $(document).ready(function() {
   var ls = window.localStorage
   var user;
+  var allContacts;
+
   try {
     user = JSON.parse(ls.getItem("token"))
     console.log("token", JSON.parse(ls.getItem("token")))
@@ -86,7 +88,6 @@ $(document).ready(function() {
   }
 
   var pullEventContactList = function() {
-    var contactsTop = []
     axios.post('http://localhost:1337/contacts/retrieve',
     {
       user: user.user
@@ -95,7 +96,8 @@ $(document).ready(function() {
       console.log("contacts axios event", resp)
       var contacts = resp.data.contacts
       contacts = contacts.sort(compare)
-      contactsTop = contacts.sort(compare)
+      console.log("contacts pulled", contacts)
+      allContacts = contacts.sort(compare)
       var contactPicker = $('#contact-picker')
       contactPicker.empty()
       for (var i=0; i<contacts.length; i++) {
@@ -104,11 +106,11 @@ $(document).ready(function() {
           `)
       }
       contactPicker.selectpicker("refresh")
+
     })
     .catch(function(err) {
       console.log("err fetch contact events", err)
     })
-    return contactsTop
   }
 
   var pullEventList = function() {
@@ -159,10 +161,18 @@ $(document).ready(function() {
           </div>
           `)
         // $(`.${eventID}`).selectpicker('render')
-        for (var j=0; j<events[i].contacts.length; j++) {
-          console.log("contacts in event", events[i].location, events[i].contacts[j])
+        // for (var j=0; j<events[i].contacts.length; j++) {
+        //   console.log("contacts in event", events[i].location, events[i].contacts[j])
+        //   $(`.${eventID}`).append(`
+        //     <option value="${events[i].contacts[j]}">${events[i].contacts[j]}</option>
+        //   `)
+        // }
+        // $(`.${eventID}`).selectpicker('refresh')
+
+        console.log("all contacts in creation", allContacts)
+        for (var j=0; j<allContacts.length; j++) {
           $(`.${eventID}`).append(`
-            <option value="${events[i].contacts[j]}">${events[i].contacts[j]}</option>
+            <option value="${allContacts[j].firstName} ${allContacts[j].lastName}">${allContacts[j].firstName} ${allContacts[j].lastName}</option>
           `)
         }
         $(`.${eventID}`).selectpicker('refresh')
@@ -433,7 +443,7 @@ $(document).ready(function() {
 
     axios.post('http://localhost:1337/event/edit', {
       location: location,
-      contacts: contact
+      contacts: contacts
     })
     .then(function(resp) {
       console.log("succ edit event", resp)
@@ -441,11 +451,11 @@ $(document).ready(function() {
     .catch(function(err) {
       console.long("failed edit event", err)
     })
-  })
+  });
 
-  $(document).on("click", ".delete-btn-event", function(e) {
-
-  })
+  // $(document).on("click", ".delete-btn-event", function(e) {
+  //
+  // })
 
 
 
